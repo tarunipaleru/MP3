@@ -227,10 +227,12 @@ def printing_odds(odds):
     for x in range(28):
         odds_print = ''
         for y in range(28):
-            if odds[x][y] > 0:
+            if odds[x][y] > 1.5:
                 odds_print += '+'
-            else:
+            elif odds[x][y] < 0:
                 odds_print += '-'
+            else:
+                odds_print += ' '
         print odds_print
 
 print ('Odds for 4 and 9')
