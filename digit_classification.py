@@ -103,23 +103,23 @@ train_freq = frequencies_prior(labels)
 train_likelihoods = likelihood_calc(data, labels, train_freq)
 
 # smoothing
-def smooth(likelihood, label, freq):
-    calc_smooth=[]
-    for digit in range(10):
-        count = freq[str(digit)]
-        row=[]
-        for i in range(28):   
-            col=[]
-            for j in range(28):
-                pcount = 0
-                if likelihood[digit][i][j]!= 0 and (label[digit]) == digit:
-                    pcount += 1
-                col.append((pcount+1)/float(count+1*2))
-            row.append(col)
-        calc_smooth.append(row)
-    return calc_smooth   
+# def smooth(likelihood, label, freq):
+#     calc_smooth=[]
+#     for digit in range(10):
+#         count = freq[str(digit)]
+#         row=[]
+#         for i in range(28):   
+#             col=[]
+#             for j in range(28):
+#                 pcount = 0
+#                 if likelihood[digit][i][j]!= 0 and (label[digit]) == digit:
+#                     pcount += 1
+#                 col.append((pcount+1)/float(count+1*2))
+#             row.append(col)
+#         calc_smooth.append(row)
+#     return calc_smooth   
                 
-smooth_likelihood = smooth(train_likelihoods, labels, train_freq)
+# smooth_likelihood = smooth(train_likelihoods, labels, train_freq)
 
 def MAP_calc():    
     TestList=[]
@@ -166,9 +166,8 @@ def classification():
                 classcount+=1
                 if digit == Test[image]:
                     rate+=1
-        print('Classification for ' + str(digit)+ ' = ' + str(round(rate/classcount,6)))
+        print('Classification for ' + str(digit)+ ' = ' + str(round(rate/classcount,6)*100))
         classify.append(rate)
-
 classification()
 
 def confusion():
@@ -183,21 +182,21 @@ def confusion():
                     confusion+=1
                 if x == int(labels_test[image]):
                     classcount+=1
-            col.append(confusion/float(classcount))
+            col.append(round(confusion/float(classcount), 4))
         matrix.append(col)
     return matrix
 
 #Print confusion matrix
 confusionMatrix = confusion()
 
-def print_func(matrix):
+def print_confusion(matrix):
     for row in matrix:
         string = ''
         for col in row:
             string += str(col)+' '
         print(string)
 
-print_func(confusionMatrix)
+print_confusion(confusionMatrix)
 
 def print_Posterior():
     digit_val=[]
@@ -210,10 +209,21 @@ def print_Posterior():
         
         low=min(val)
         print ('Lowest Posterior Probability for ' + str(digit))
-        print_func(data_test[low[1]])
+        
+        for row in data_test[low[1]]:
+            string_low = ''
+            for col in row:
+                string_low += str(col)+''
+            print(string_low)
+        
         high=max(val)
         print ('Highest Posterior Probability for ' + str(digit))
-        print_func(data_test[high[1]])
+        
+        for row in data_test[high[1]]:
+            string_high = ''
+            for col in row:
+                string_high += str(col)+''
+            print(string_high)
         digit_val.append(val)
 
 print_Posterior()
