@@ -1,4 +1,4 @@
-from math import log
+import math
 import sys
 
 #cleaning data to get all the test and training data and labels
@@ -83,7 +83,7 @@ def frequencies_prior(labels):
 def likelihood_calc(data, label, freq):
     calculations=[]
     for digit in range(0, 10):
-        examplecount = freq[str(digit)]
+        count = freq[str(digit)]
         row=[]
         for i in range(0, 28):   
             col=[]
@@ -92,15 +92,108 @@ def likelihood_calc(data, label, freq):
                 for image in range(0,4999):
                     if data[image][i][j]!= 0 and int(label[image])== digit:
                         pcount += 1
-                col.append(round((pcount+1)/float(examplecount+1*2),3))
+                col.append(round((pcount+10)/float(count+10*2),6))
             row.append(col)
         calculations.append(row)
     return calculations   
 
-def train_model():
-    train_freq = frequencies_prior(labels):
-    train_likelihoods = likelihood_calc(data, labels, train_freq)
-    return train_freq, train_likelihoods
+#trained values
+train_freq = frequencies_prior(labels)
+train_likelihoods = likelihood_calc(data, labels, train_freq)
+
+# smoothing
+def smooth(likelihood, label, freq):
+    calc_smooth=[]
+    for digit in range(0, 10):
+        count = freq[str(digit)]
+        row=[]
+        for i in range(0, 28):   
+            col=[]
+            for j in range(0, 28):
+                pcount = 0
+                if likelihood[digit][i][j]!= 0 and int(label[digit]) == digit:
+                    pcount += 1
+                col.append(round((pcount+1)/float(count+1*2),4))
+            row.append(col)
+        calc_smooth.append(row)
+    return calc_smooth   
+                
+smooth_likelihood = smooth(train_likelihoods, labels, train_freq)
+
+def MAP_calc():    
+    TestList=[]
+    x=0
+    Prototypical= []
+    for image in data_test:
+        MAP=[]
+        for digit in range(0,10):
+            result=0
+            result+=math.log(train_freq[str(digit)]/5000.0)
+            for i in range(0,28):
+                for j in range(0,28):
+                    if image[i][j]!= 1:
+                        result += math.log(1-train_likelihoods[digit][i][j])
+                    else:
+                        result += math.log(train_likelihoods[digit][i][j])  
+            MAP.append(round(result,6))
+        prediction= MAP.index(max(MAP))
+        Prototypical.append((max(MAP),x))
+        TestList.append(prediction)
+        x = x+1
+    return TestList, prediction, Prototypical
+
+Test, Pred, Proto = MAP_calc()
+
+def accuracy():
+    count = 0
+    for i in range(0, 999):
+        if Test[i] == int(labels_test[i]):
+            count = count + 1
+    final = count/1000.0
+    return final 
+
+accuracy_score = accuracy()
+print 'Accuracy Score: ' + str(accuracy_score)
+
+def classification():
+    classificationList=[]
+    for i in range(0,10):
+        classificationRate=0.0
+        classcount=0
+        for img in range(0,999):
+            if i == int(labels_test[img]):
+                classcount+=1
+                if i == Test[img]:
+                    classificationRate+=1
+        print('Classification rate for digit '+str(i)+': '+str(round(classificationRate/classcount,6)))
+        classificationList.append(classificationRate)
+classification()
+
+def confusion():
+    matrix=[]
+    for i in range(0,10):
+        colList=[]
+        for j in range(0,10):
+            classcount=0
+            confusion=0
+            for img in range(0,999):
+                if i == int(labels_test[img]):
+                    classcount+=1
+                if Test[img] == j and int(labels_test[img])== i:
+                    confusion+=1
+            colList.append(round(confusion/float(classcount),2))
+        matrix.append(colList)
+    return matrix
+
+#Print confusion matrix
+confusionMatrix = confusion()
+for row in confusionMatrix:
+    string = ''
+    for col in row:
+        string += str(col)+' '
+    print(string)
+
+
 
 
 
