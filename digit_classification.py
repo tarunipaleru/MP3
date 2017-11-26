@@ -90,9 +90,10 @@ def likelihood_calc(data, label, freq):
             for j in range(28):
                 pcount = 0
                 for image in range(0,4999):
-                    if data[image][i][j]!= 0 and int(label[image])== digit:
+                    if data[image][i][j]!= 0 and int(label[image]) == digit:
                         pcount += 1
-                col.append(round((pcount+10)/float(count+10*2),6))
+                #the 10 accounts for the smoothing
+                col.append((pcount+10)/float(count+10*2))
             row.append(col)
         calculations.append(row)
     return calculations   
@@ -111,9 +112,9 @@ def smooth(likelihood, label, freq):
             col=[]
             for j in range(28):
                 pcount = 0
-                if likelihood[digit][i][j]!= 0 and int(label[digit]) == digit:
+                if likelihood[digit][i][j]!= 0 and (label[digit]) == digit:
                     pcount += 1
-                col.append(round((pcount+1)/float(count+1*2),4))
+                col.append((pcount+1)/float(count+1*2))
             row.append(col)
         calc_smooth.append(row)
     return calc_smooth   
@@ -135,7 +136,7 @@ def MAP_calc():
                         result += math.log(1-train_likelihoods[digit][i][j])
                     else:
                         result += math.log(train_likelihoods[digit][i][j])  
-            MAP.append(round(result,6))
+            MAP.append(result)
         prediction= MAP.index(max(MAP))
         Prototypical.append((max(MAP),x))
         TestList.append(prediction)
@@ -147,7 +148,7 @@ Test, Pred, Proto = MAP_calc()
 def accuracy():
     count = 0
     for i in range(999):
-        if Test[i] == int(labels_test[i]):
+        if Test[i] == (labels_test[i]):
             count = count + 1
     final = count/1000.0
     return final 
@@ -167,6 +168,7 @@ def classification():
                     rate+=1
         print('Classification for ' + str(digit)+ ' = ' + str(round(rate/classcount,6)))
         classify.append(rate)
+
 classification()
 
 def confusion():
@@ -181,7 +183,7 @@ def confusion():
                     confusion+=1
                 if x == int(labels_test[image]):
                     classcount+=1
-            col.append(round(confusion/float(classcount),2))
+            col.append(confusion/float(classcount))
         matrix.append(col)
     return matrix
 
@@ -206,12 +208,12 @@ def print_proto():
                 if int(labels_test[image]) == digit:
                     val.append(Proto[image])
         
-        smallest=min(val)
-        print ('smallest: ' + str(smallest))
-        print_func(data_test[smallest[1]])
-        largest=max(val)
-        print ('largest: ' + str(largest))
-        print_func(data_test[largest[1]])
+        low=min(val)
+        print ('Lowest Posterior Probabilities for ' + str(digit))
+        print_func(data_test[low[1]])
+        high=max(val)
+        print ('Highest Posterior Probabilities for ' + str(digit))
+        print_func(data_test[high[1]])
         digit_val.append(val)
 
 print_proto()
