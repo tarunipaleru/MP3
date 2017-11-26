@@ -22,8 +22,6 @@ for line in file_train_lines:
     linecount += 1
     image.append(line_val)
 
-print data
-
 file_label = open('traininglabels', 'r')
 file_label_lines = file_label.readlines()
 
@@ -31,7 +29,6 @@ labels = []
 for label in file_label_lines:
     label = label.strip('\n')
     labels.append(str(label))
-#print labels
 
 file_test = open('testimages', 'r')
 file_test_lines = file_test.readlines()
@@ -92,7 +89,7 @@ def likelihood_calc(data, label, freq):
             col=[]
             for j in range(0, 28):
                 pcount = 0
-                for image in range(0,5000):
+                for image in range(0,4999):
                     if data[image][i][j]!= 0 and int(label[image])== digit:
                         pcount += 1
                 col.append(round((pcount+1)/float(examplecount+1*2),3))
@@ -100,9 +97,10 @@ def likelihood_calc(data, label, freq):
         calculations.append(row)
     return calculations   
 
-freq = frequencies_prior(labels)
-print(freq)
-print likelihood_calc(data, labels, freq)
+def train_model():
+    train_freq = frequencies_prior(labels):
+    train_likelihoods = likelihood_calc(data, labels, train_freq)
+    return train_freq, train_likelihoods
 
 
 
