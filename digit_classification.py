@@ -92,8 +92,8 @@ def likelihood_calc(data, label, freq):
                 for image in range(0,4999):
                     if data[image][i][j]!= 0 and int(label[image]) == digit:
                         pcount += 1
-                #the 10 accounts for the smoothing
-                col.append((pcount+10)/float(count+10*2))
+                #the 0.1 accounts for the smoothing that provides the highest accuracy
+                col.append((pcount+.1)/float(count+.1*2))
             row.append(col)
         calculations.append(row)
     return calculations   
@@ -101,25 +101,6 @@ def likelihood_calc(data, label, freq):
 #trained values
 train_freq = frequencies_prior(labels)
 train_likelihoods = likelihood_calc(data, labels, train_freq)
-
-# smoothing
-# def smooth(likelihood, label, freq):
-#     calc_smooth=[]
-#     for digit in range(10):
-#         count = freq[str(digit)]
-#         row=[]
-#         for i in range(28):   
-#             col=[]
-#             for j in range(28):
-#                 pcount = 0
-#                 if likelihood[digit][i][j]!= 0 and (label[digit]) == digit:
-#                     pcount += 1
-#                 col.append((pcount+1)/float(count+1*2))
-#             row.append(col)
-#         calc_smooth.append(row)
-#     return calc_smooth   
-                
-# smooth_likelihood = smooth(train_likelihoods, labels, train_freq)
 
 def MAP_calc():    
     calc=[]
@@ -170,6 +151,13 @@ def classification():
         classify.append(rate)
 classification()
 
+def print_confusion(matrix):
+    for row in matrix:
+        string = ''
+        for col in row:
+            string += str(col)+' '
+        print(string)
+
 def confusion():
     matrix=[]
     for x in range(10):
@@ -188,13 +176,6 @@ def confusion():
 
 #Print confusion matrix
 confusionMatrix = confusion()
-
-def print_confusion(matrix):
-    for row in matrix:
-        string = ''
-        for col in row:
-            string += str(col)+' '
-        print(string)
 
 print_confusion(confusionMatrix)
 
@@ -228,5 +209,36 @@ def print_Posterior():
 
 print_Posterior()
 
+def odds_ratio_calc(likelihood, c1, c2):
+    odds_calc=[]
+    for x in range(0,28):
+        row=[]
+        for y in range(0,28):
+            row.append(math.log(likelihood[c1][x][y]/likelihood[c2][x][y]))
+        odds_calc.append(row)
+    return odds_calc
 
+odds_4_9 = odds_ratio_calc(train_likelihoods, 4, 9)
+odds_5_3 = odds_ratio_calc(train_likelihoods, 5, 3)
+odds_7_9 = odds_ratio_calc(train_likelihoods, 7, 9)
+odds_8_3 = odds_ratio_calc(train_likelihoods, 8, 3)
+
+def printing_odds(odds):
+    for x in range(28):
+        odds_print = ''
+        for y in range(28):
+            if odds[x][y] > 0:
+                odds_print += '+'
+            else:
+                odds_print += '-'
+        print odds_print
+
+print ('Odds for 4 and 9')
+printing_odds(odds_4_9)
+print ('Odds for 5 and 3')
+printing_odds(odds_5_3)
+print ('Odds for 7 and 9')
+printing_odds(odds_7_9)
+print ('Odds for 8 and 3')
+printing_odds(odds_8_3)
 
