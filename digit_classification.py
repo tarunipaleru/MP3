@@ -199,7 +199,7 @@ def print_func(matrix):
 
 print_func(confusionMatrix)
 
-def print_proto():
+def print_Posterior():
     digit_val=[]
     for digit in range(10):
         val=[]
@@ -209,14 +209,14 @@ def print_proto():
                     val.append(Proto[image])
         
         low=min(val)
-        print ('Lowest Posterior Probabilities for ' + str(digit))
+        print ('Lowest Posterior Probability for ' + str(digit))
         print_func(data_test[low[1]])
         high=max(val)
-        print ('Highest Posterior Probabilities for ' + str(digit))
+        print ('Highest Posterior Probability for ' + str(digit))
         print_func(data_test[high[1]])
         digit_val.append(val)
 
-print_proto()
+print_Posterior()
 
 
 
