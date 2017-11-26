@@ -122,9 +122,9 @@ train_likelihoods = likelihood_calc(data, labels, train_freq)
 # smooth_likelihood = smooth(train_likelihoods, labels, train_freq)
 
 def MAP_calc():    
-    TestList=[]
+    calc=[]
+    proto_val= []
     x=0
-    Prototypical= []
     for image in data_test:
         MAP=[]
         for digit in range(10):
@@ -137,11 +137,11 @@ def MAP_calc():
                     else:
                         result += math.log(train_likelihoods[digit][i][j])  
             MAP.append(result)
+        proto_val.append((max(MAP),x))
         prediction= MAP.index(max(MAP))
-        Prototypical.append((max(MAP),x))
-        TestList.append(prediction)
+        calc.append(prediction)
         x = x+1
-    return TestList, prediction, Prototypical
+    return calc, prediction, proto_val
 
 Test, Pred, Proto = MAP_calc()
 
@@ -160,13 +160,13 @@ def classification():
     classify=[]
     for digit in range(10):
         rate = 0.0
-        classcount = 0
+        count = 0
         for image in range(999):
             if digit == int(labels_test[image]):
-                classcount+=1
+                count+=1
                 if digit == Test[image]:
                     rate+=1
-        print('Classification for ' + str(digit)+ ' = ' + str(round(rate/classcount,6)*100))
+        print('Classification for ' + str(digit)+ ' = ' + str(round(rate/count,6)*100))
         classify.append(rate)
 classification()
 
@@ -175,14 +175,14 @@ def confusion():
     for x in range(10):
         col = []
         for y in range(10):
-            classcount=0
-            confusion=0
+            conf=0
+            count=0
             for image in range(999):
                 if Test[image] == y and int(labels_test[image])== x:
-                    confusion+=1
+                    conf+=1
                 if x == int(labels_test[image]):
-                    classcount+=1
-            col.append(round(confusion/float(classcount), 4))
+                    count+=1
+            col.append(round(conf/float(count), 4))
         matrix.append(col)
     return matrix
 
