@@ -153,49 +153,68 @@ def accuracy():
     return final 
 
 accuracy_score = accuracy()
-print 'Accuracy Score: ' + str(accuracy_score)
+print ('Accuracy Score: ' + str(accuracy_score))
 
 def classification():
-    classificationList=[]
-    for i in range(0,10):
-        classificationRate=0.0
-        classcount=0
-        for img in range(0,999):
-            if i == int(labels_test[img]):
+    classify=[]
+    for digit in range(0,10):
+        rate = 0.0
+        classcount = 0
+        for image in range(0,999):
+            if digit == int(labels_test[image]):
                 classcount+=1
-                if i == Test[img]:
-                    classificationRate+=1
-        print('Classification rate for digit '+str(i)+': '+str(round(classificationRate/classcount,6)))
-        classificationList.append(classificationRate)
+                if digit == Test[image]:
+                    rate+=1
+        print('Classification for ' + str(digit)+ ' = ' + str(round(rate/classcount,6)))
+        classify.append(rate)
 classification()
 
 def confusion():
     matrix=[]
-    for i in range(0,10):
-        colList=[]
-        for j in range(0,10):
+    for x in range(0,10):
+        col = []
+        for y in range(0,10):
             classcount=0
             confusion=0
-            for img in range(0,999):
-                if i == int(labels_test[img]):
-                    classcount+=1
-                if Test[img] == j and int(labels_test[img])== i:
+            for image in range(0,999):
+                if Test[image] == y and int(labels_test[image])== x:
                     confusion+=1
-            colList.append(round(confusion/float(classcount),2))
-        matrix.append(colList)
+                if x == int(labels_test[image]):
+                    classcount+=1
+            col.append(round(confusion/float(classcount),2))
+        matrix.append(col)
     return matrix
 
 #Print confusion matrix
 confusionMatrix = confusion()
-for row in confusionMatrix:
-    string = ''
-    for col in row:
-        string += str(col)+' '
-    print(string)
 
+def print_func(matrix):
+    for row in matrix:
+        string = ''
+        for col in row:
+            string += str(col)+' '
+        print(string)
 
+print_func(confusionMatrix)
 
+def print_proto():
+    digit_val=[]
+    for digit in range(0,10):
+        val=[]
+        for image in range(0,999):
+            if Test[image] == digit:
+                if int(labels_test[image]) == digit:
+                    val.append(Proto[image])
+        
+        smallest=min(val)
+        print ('smallest: ' + str(smallest))
+        print_func(data_test[smallest[1]])
+        largest=max(val)
+        print ('largest: ' + str(largest))
+        print_func(data_test[largest[1]])
+        digit_val.append(val)
 
+print_proto()
 
 
 
