@@ -82,12 +82,12 @@ def frequencies_prior(labels):
 #estimating likelihoods 
 def likelihood_calc(data, label, freq):
     calculations=[]
-    for digit in range(0, 10):
+    for digit in range(10):
         count = freq[str(digit)]
         row=[]
-        for i in range(0, 28):   
+        for i in range(28):   
             col=[]
-            for j in range(0, 28):
+            for j in range(28):
                 pcount = 0
                 for image in range(0,4999):
                     if data[image][i][j]!= 0 and int(label[image])== digit:
@@ -104,12 +104,12 @@ train_likelihoods = likelihood_calc(data, labels, train_freq)
 # smoothing
 def smooth(likelihood, label, freq):
     calc_smooth=[]
-    for digit in range(0, 10):
+    for digit in range(10):
         count = freq[str(digit)]
         row=[]
-        for i in range(0, 28):   
+        for i in range(28):   
             col=[]
-            for j in range(0, 28):
+            for j in range(28):
                 pcount = 0
                 if likelihood[digit][i][j]!= 0 and int(label[digit]) == digit:
                     pcount += 1
@@ -126,11 +126,11 @@ def MAP_calc():
     Prototypical= []
     for image in data_test:
         MAP=[]
-        for digit in range(0,10):
+        for digit in range(10):
             result=0
             result+=math.log(train_freq[str(digit)]/5000.0)
-            for i in range(0,28):
-                for j in range(0,28):
+            for i in range(28):
+                for j in range(28):
                     if image[i][j]!= 1:
                         result += math.log(1-train_likelihoods[digit][i][j])
                     else:
@@ -146,7 +146,7 @@ Test, Pred, Proto = MAP_calc()
 
 def accuracy():
     count = 0
-    for i in range(0, 999):
+    for i in range(999):
         if Test[i] == int(labels_test[i]):
             count = count + 1
     final = count/1000.0
@@ -157,10 +157,10 @@ print ('Accuracy Score: ' + str(accuracy_score))
 
 def classification():
     classify=[]
-    for digit in range(0,10):
+    for digit in range(10):
         rate = 0.0
         classcount = 0
-        for image in range(0,999):
+        for image in range(999):
             if digit == int(labels_test[image]):
                 classcount+=1
                 if digit == Test[image]:
@@ -171,12 +171,12 @@ classification()
 
 def confusion():
     matrix=[]
-    for x in range(0,10):
+    for x in range(10):
         col = []
-        for y in range(0,10):
+        for y in range(10):
             classcount=0
             confusion=0
-            for image in range(0,999):
+            for image in range(999):
                 if Test[image] == y and int(labels_test[image])== x:
                     confusion+=1
                 if x == int(labels_test[image]):
@@ -199,9 +199,9 @@ print_func(confusionMatrix)
 
 def print_proto():
     digit_val=[]
-    for digit in range(0,10):
+    for digit in range(10):
         val=[]
-        for image in range(0,999):
+        for image in range(999):
             if Test[image] == digit:
                 if int(labels_test[image]) == digit:
                     val.append(Proto[image])
